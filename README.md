@@ -1,5 +1,7 @@
 # Aoi - 3D Anime Companion
 
+![Overview](overview.png)
+
 **Aoi** adalah desktop companion berupa karakter 3D anime wanita yang bisa diajak bicara (voice) atau mengetik (chat). Aoi akan merespons dengan **bubble chat** di samping kepala atau **bersuara** tergantung pengaturan mode.
 
 ## Fitur Utami
