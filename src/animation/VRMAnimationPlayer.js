@@ -14,6 +14,8 @@
 //   - Clip ber-`loop: true` (mis. idle) otomatis diputar terus-menerus.
 //   - Clip sekali putar (mis. greeting) dipicu lewat triggerAction(id),
 //     lalu otomatis kembali ke idle setelah selesai.
+//   - Semua pergantian clip memakai CROSSFADE halus (bukan potong langsung),
+//     jadi transisi greeting -> idle terlihat natural.
 //   - Efek wajah kecil yang tetap hidup: berkedip (ekspresi "blink") dan
 //     mulut bergerak saat bicara (aa/ih/ou/ee/oh).
 //
@@ -32,6 +34,10 @@ import {
 } from "@pixiv/three-vrm-animation";
 
 const VISEMES = ["aa", "ih", "ou", "ee", "oh"];
+
+// Durasi crossfade antar animasi (detik). Nilai ini juga dipakai untuk
+// memudar kembali ke idle setelah clip sekali-putar selesai.
+const FADE_TIME = 0.4;
 
 /**
  * @param {import("@pixiv/three-vrm").VRM} vrm
@@ -104,23 +110,27 @@ export async function createVRMAnimationPlayer(vrm, clipSpecs) {
   }
 
   // ---- Pemutaran clip ----
-  function stopOthers(exceptId) {
-    for (const [id, action] of Object.entries(actions)) {
-      if (id !== exceptId && action.isRunning()) {
-        action.stop();
-      }
-    }
-  }
+  let activeAction = null; // action yang sedang tampil (idle atau sekali-putar)
 
-  /** Mulai putar clip; jika bukan idle, clip lain dihentikan dulu. */
-  function startClip(id) {
+  /**
+   * Ganti clip dengan crossfade: clip lama di-fade-out sementara clip baru
+   * di-fade-in, jadi transisi antar animasi terlihat halus dan natural.
+   */
+  function startClip(id, fadeTime = FADE_TIME) {
     const action = actions[id];
-    if (!action) return;
+    if (!action || action === activeAction) return;
 
-    stopOthers(id);
-    activeOnce = id === idleId ? null : id;
+    // Clip yang sedang tampil dipudarkan; clip baru masuk bersamaan.
+    // (Action yang sudah fade-out tuntas otomatis di-disable oleh mixer.)
+    const prev = activeAction && activeAction !== action && activeAction.enabled ? activeAction : null;
+    if (prev) prev.fadeOut(fadeTime);
+
     action.reset();
+    action.fadeIn(fadeTime);
     action.play();
+
+    activeAction = action;
+    activeOnce = id === idleId ? null : id;
   }
 
   // Saat clip sekali-putar selesai -> kembali ke idle.

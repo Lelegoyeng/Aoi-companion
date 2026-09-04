@@ -27,7 +27,8 @@ const IDLE_RESPONSES = [
   "Aoi juga begitu pikirnya!",
 ];
 
-// Reaction triggers based on keywords in user input
+// Reaction triggers based on keywords in user input.
+// id animasi = nama file .vrma di public/animations/ (terdaftar di character.js).
 const REACTION_KEYWORDS = {
   greeting: ["hai", "halo", "hey", "hi", "konichiwa", "pagi", "siang", "malam"],
   smile: ["bagus", "keren", "hebat", "cantik", "indah", "suka", "sayang"],
@@ -38,22 +39,44 @@ const REACTION_KEYWORDS = {
   reactionSurprise: ["wow", "wah", "serius", "beneran", "asli", "gila"],
   reactionSad: ["sedih", "kesepian", "galau", "kecewa", "susah"],
   lean: ["dekat", "sini", "kemari", "mendekat"],
-  stretch: ["bosan", "capek", "lelah", "ngantuk", "istirahat"],
+  stretch: ["bosan", "capek", "lelah", "istirahat"],
+  sleepy: ["ngantuk", "mengantuk", "nguap"],
+  goodbye: ["bye", "dadah", "dah", "sampai jumpa", "sampai nanti", "selamat tinggal", "pamit"],
+  excited: ["hore", "yey", "yay", "yes", "menang", "asik", "seru banget"],
+  angry: ["marah", "kesal", "dongkol", "sebel", "bete", "geram"],
+  spin: ["putar", "muter", "berputar", "putaran", "spin"],
+  squat: ["jongkok"],
+  showBody: ["tampil", "pamer", "gaya", "perlihatkan"],
+  peace: ["damai", "peace", "tanda damai"],
+  shoot: ["tembak", "dor", "bang", "pew"],
+  lookAround: ["cari", "mencari", "lihat-lihat"],
+  modelPose: ["selfie", "foto", "berpose", "strike a pose"],
 };
 
-// Response text per reaction. SATU-SATUNYA gerakan yang ada adalah
-// "greeting" (dari greeting.vrma); reaksi lain hanya teks, tanpa animasi.
+// Response text + animasi per reaksi. Semua id mengacu ke file .vrma yang
+// sudah didaftarkan di character.js; null berarti hanya teks tanpa gerakan.
 const REACTION_RESPONSES = {
   greeting: { text: "Hai juga~ Senang lihat kamu lagi!", anim: "greeting" },
-  smile: { text: "Makasih ya~ Aoi senang!", anim: null },
+  smile: { text: "Makasih ya~ Aoi senang!", anim: "clapping" },
   nod: { text: "Oke! Aoi ngerti~", anim: null },
-  thinking: { text: "Hmm, Aoi pikirkan dulu ya...", anim: null },
-  shy: { text: "Eh?! Jangan begitu dong~ *malu*", anim: null },
-  reactionLove: { text: "Aoi juga sayang kamu~!", anim: null },
-  reactionSurprise: { text: "Wah, serius?! Keren ya!", anim: null },
-  reactionSad: { text: "Aoi di sini buat kamu, ya~", anim: null },
+  thinking: { text: "Hmm, Aoi pikirkan dulu ya...", anim: "thinking" },
+  shy: { text: "Eh?! Jangan begitu dong~ *malu*", anim: "blush" },
+  reactionLove: { text: "Aoi juga sayang kamu~!", anim: "peace-sign" },
+  reactionSurprise: { text: "Wah, serius?! Keren ya!", anim: "surprised" },
+  reactionSad: { text: "Aoi di sini buat kamu, ya~", anim: "sad" },
   lean: { text: "Aoi mendekat nih~", anim: null },
-  stretch: { text: "Aoi juga mau meregangkan badan~", anim: null },
+  stretch: { text: "Aoi juga mau meregangkan badan~", anim: "relax" },
+  sleepy: { text: "Aoi mulai ngantuk juga...", anim: "sleepy" },
+  goodbye: { text: "Sampai jumpa lagi ya~!", anim: "goodbye" },
+  excited: { text: "Horeee~ Senangnya!", anim: "jump" },
+  angry: { text: "Hmm, Aoi sebel juga dengernya!", anim: "angry" },
+  spin: { text: "Wush~ Aoi berputar!", anim: "spin" },
+  squat: { text: "Aoi jongkok dulu deh~", anim: "squat" },
+  showBody: { text: "Nih, lihat Aoi tampil~", anim: "show-full-body" },
+  peace: { text: "Peace~! ✌️", anim: "peace-sign" },
+  shoot: { text: "Dor dor! Aoi jago nembak~", anim: "shoot" },
+  lookAround: { text: "Aoi lihat-lihat dulu ya...", anim: "look-around" },
+  modelPose: { text: "Cheese~! Pose dulu dong!", anim: "model-pose" },
 };
 
 function detectReaction(input) {
@@ -125,7 +148,7 @@ function processUserInput(text) {
 
   // Trigger reaction animation if detected
   if (anim && character) {
-    character.triggerAction(anim, 4);
+    character.triggerAction(anim);
   }
 
   if (currentMode === "voice") {
@@ -156,7 +179,7 @@ async function init() {
   initModeToggle();
   initSpeechCallbacks();
 
-  // Greeting on startup (satu-satunya gerakan karakter)
+  // Greeting on startup
   setTimeout(() => {
     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
     showBubble(greeting, 6000);

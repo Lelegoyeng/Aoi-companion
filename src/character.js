@@ -3,7 +3,7 @@
 // ------------------------------------------------------------
 // Ekspor publik (dipakai scene.js / main.js):
 //   createPlaceholder()  -> karakter darurat statis (jika VRM gagal)
-//   loadVRM(path)        -> karakter VRM + SATU gerakan greeting
+//   loadVRM(path)        -> karakter VRM + semua animasi dari public/animations/
 //   loadModel(path)      -> model GLTF/GLB biasa (tanpa animasi)
 //
 // Semua karakter mengekspos API yang sama:
@@ -163,7 +163,7 @@ export function createPlaceholder() {
 }
 
 // ============================================================
-// VRM CHARACTER (dengan animasi greeting dari file .vrma)
+// VRM CHARACTER (dengan animasi .vrma dari public/animations/)
 // ============================================================
 export async function loadVRM(path) {
   const [{ GLTFLoader }, { VRMLoaderPlugin }] = await Promise.all([
@@ -194,12 +194,29 @@ export async function loadVRM(path) {
     if (child.isMesh) child.castShadow = true;
   });
 
-  // Pemutar animasi VRMA: idle berjalan otomatis; greeting dipicu lewat
-  // triggerAction("greeting") lalu kembali ke idle. Animasi lain tinggal
-  // ditambahkan ke daftar ini (lihat public/animations/README.md).
+  // Pemutar animasi VRMA: idle berjalan otomatis (loop); animasi lain dipicu
+  // lewat triggerAction(id) lalu kembali ke idle dengan crossfade halus.
+  // Semua file .vrma di public/animations/ didaftarkan di sini.
   const player = await createVRMAnimationPlayer(vrm, [
     { id: "idle", url: "/animations/idle.vrma", loop: true },
     { id: "greeting", url: "/animations/greeting.vrma", loop: false },
+    { id: "thinking", url: "/animations/thinking.vrma", loop: false },
+    { id: "surprised", url: "/animations/surprised.vrma", loop: false },
+    { id: "sad", url: "/animations/sad.vrma", loop: false },
+    { id: "blush", url: "/animations/blush.vrma", loop: false },
+    { id: "clapping", url: "/animations/clapping.vrma", loop: false },
+    { id: "goodbye", url: "/animations/goodbye.vrma", loop: false },
+    { id: "jump", url: "/animations/jump.vrma", loop: false },
+    { id: "angry", url: "/animations/angry.vrma", loop: false },
+    { id: "spin", url: "/animations/spin.vrma", loop: false },
+    { id: "squat", url: "/animations/squat.vrma", loop: false },
+    { id: "relax", url: "/animations/relax.vrma", loop: false },
+    { id: "sleepy", url: "/animations/sleepy.vrma", loop: false },
+    { id: "look-around", url: "/animations/look-around.vrma", loop: false },
+    { id: "show-full-body", url: "/animations/show-full-body.vrma", loop: false },
+    { id: "peace-sign", url: "/animations/peace-sign.vrma", loop: false },
+    { id: "shoot", url: "/animations/shoot.vrma", loop: false },
+    { id: "model-pose", url: "/animations/model-pose.vrma", loop: false },
   ]);
 
   console.log("VRM model loaded:", vrm.meta?.title || path);
