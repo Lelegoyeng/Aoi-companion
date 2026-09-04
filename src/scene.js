@@ -11,8 +11,8 @@ export async function initScene() {
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 1.4, 2.0); // Moved closer and higher for waist-up
-  camera.lookAt(0, 1.1, 0); // Looking at chest/neck area
+  camera.position.set(0, 1.45, 2.0); // Moved slightly higher
+  camera.lookAt(0, 1.25, 0); // Looking slightly higher to shift character down
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -25,7 +25,7 @@ export async function initScene() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.target.set(0, 1.1, 0); // Orbit around the chest area
+  controls.target.set(0, 1.2, 0); // Orbit around the chest area
   controls.minDistance = 1.0;
   controls.maxDistance = 3.5;
   controls.maxPolarAngle = Math.PI / 2 + 0.2; // Don't allow camera to go too far below ground

@@ -161,7 +161,7 @@ export function createPlaceholder() {
     group,
     parts,
     setTalking(val) { isTalking = val; },
-    setWaving(val) { isWaving = val; },
+    triggerAction(name, duration) {}, // placeholder
 
     update(delta, elapsed) {
       const bob = Math.sin(elapsed * 2) * 0.02;
@@ -250,6 +250,16 @@ export function loadVRM(path) {
           const bones = {};
           ["head", "spine", "chest", "hips", "leftUpperArm", "leftLowerArm",
            "rightUpperArm", "rightLowerArm", "leftHand", "rightHand",
+           "leftThumbProximal", "leftThumbIntermediate", "leftThumbDistal",
+           "leftIndexProximal", "leftIndexIntermediate", "leftIndexDistal",
+           "leftMiddleProximal", "leftMiddleIntermediate", "leftMiddleDistal",
+           "leftRingProximal", "leftRingIntermediate", "leftRingDistal",
+           "leftLittleProximal", "leftLittleIntermediate", "leftLittleDistal",
+           "rightThumbProximal", "rightThumbIntermediate", "rightThumbDistal",
+           "rightIndexProximal", "rightIndexIntermediate", "rightIndexDistal",
+           "rightMiddleProximal", "rightMiddleIntermediate", "rightMiddleDistal",
+           "rightRingProximal", "rightRingIntermediate", "rightRingDistal",
+           "rightLittleProximal", "rightLittleIntermediate", "rightLittleDistal",
            "shoulders", "neck", "upperChest"].forEach((name) => {
             bones[name] = humanoid.getNormalizedBoneNode(name);
           });
@@ -276,11 +286,27 @@ export function loadVRM(path) {
             bone.rotation.z = lerp(bone.rotation.z, tz, speed);
           };
 
+          const setFingers = (side, curl, speed) => {
+            const zCurl = side === "left" ? curl : -curl;
+            ["Index", "Middle", "Ring", "Little"].forEach(f => {
+              smoothBone(bones[`${side}${f}Proximal`], 0, 0, zCurl, speed);
+              smoothBone(bones[`${side}${f}Intermediate`], 0, 0, zCurl, speed);
+              smoothBone(bones[`${side}${f}Distal`], 0, 0, zCurl, speed);
+            });
+            smoothBone(bones[`${side}ThumbProximal`], 0, zCurl * 0.5, zCurl * 0.5, speed);
+            smoothBone(bones[`${side}ThumbIntermediate`], 0, 0, zCurl * 0.5, speed);
+            smoothBone(bones[`${side}ThumbDistal`], 0, 0, zCurl * 0.5, speed);
+          };
+
           resolve({
             group: model,
             vrm,
             setTalking(val) { isTalking = val; },
-            setWaving(val) { isWaving = val; },
+            triggerAction(name, duration) {
+              currentAction = name;
+              actionTimer = duration;
+              actionProgress = 0;
+            },
 
             update(delta, elapsed) {
               vrm.update(delta);
@@ -312,25 +338,50 @@ export function loadVRM(path) {
               smoothBone(bones.chest, 0, 0, 0, delta * 3);
               smoothBone(bones.neck, 0, 0, 0, delta * 3);
               smoothBone(bones.shoulders, 0, 0, 0, delta * 3);
-              smoothBone(bones.leftUpperArm, 0.4, 0, 0.3, delta * 3);
-              smoothBone(bones.leftLowerArm, -0.7, 0, 0, delta * 3);
-              smoothBone(bones.leftHand, 0, 0, 0, delta * 3);
-              smoothBone(bones.rightUpperArm, 0.4, 0, -0.3, delta * 3);
-              smoothBone(bones.rightLowerArm, -0.7, 0, 0, delta * 3);
-              smoothBone(bones.rightHand, 0, 0, 0, delta * 3);
+              let skipLeftArm = false;
+              let skipRightArm = false;
+              if (currentAction === "greeting") skipRightArm = true;
+              if (currentAction === "shy") { skipLeftArm = true; skipRightArm = true; }
+              if (currentAction === "hair") skipRightArm = true;
+
+              if (!skipLeftArm) {
+                smoothBone(bones.leftUpperArm, 0.4, 0, 0.3, delta * 3);
+                smoothBone(bones.leftLowerArm, -0.7, 0, 0, delta * 3);
+                smoothBone(bones.leftHand, 0, 0, 0, delta * 3);
+                setFingers("left", 0.3, delta * 3);
+              }
+              if (!skipRightArm) {
+                smoothBone(bones.rightUpperArm, 0.4, 0, -0.3, delta * 3);
+                smoothBone(bones.rightLowerArm, -0.7, 0, 0, delta * 3);
+                smoothBone(bones.rightHand, 0, 0, 0, delta * 3);
+                setFingers("right", 0.3, delta * 3);
+              }
 
               const breath = (Math.sin(elapsed * 1.8) + Math.sin(elapsed * 2.5) * 0.3) * 0.012;
               const sway = (Math.sin(elapsed * 0.9) + Math.sin(elapsed * 1.4) * 0.4) * 0.015;
               const headSway = (Math.sin(elapsed * 0.8) + Math.sin(elapsed * 1.3) * 0.5) * 0.04;
               const lookAround = (Math.sin(elapsed * 0.5) * 0.05) + (Math.cos(elapsed * 0.3) * 0.03);
+              const armShiftX = Math.sin(elapsed * 0.8) * 0.02;
+              const armShiftZ = Math.cos(elapsed * 1.1) * 0.03;
+              const elbowFlex = Math.sin(elapsed * 0.6) * 0.04;
+              const handFlex = Math.cos(elapsed * 1.4) * 0.06;
 
               if (currentAction === "idle") {
                 smoothBone(bones.head, headSway, lookAround, sway, delta * 2);
                 smoothBone(bones.neck, headSway * 0.5, lookAround * 0.5, 0, delta * 2);
                 smoothBone(bones.spine, breath, 0, sway * 0.5, delta * 2);
                 smoothBone(bones.chest, breath * 0.5, 0, 0, delta * 2);
-                smoothBone(bones.leftUpperArm, 0.4, 0, 0.3 + Math.sin(elapsed * 1.2) * 0.03, delta * 2);
-                smoothBone(bones.rightUpperArm, 0.4, 0, -0.3 + Math.sin(elapsed * 1.2 + 1) * 0.03, delta * 2);
+                smoothBone(bones.leftUpperArm, 0.4 + armShiftX, 0, 0.3 + armShiftZ, delta * 2);
+                smoothBone(bones.leftLowerArm, -0.7 + elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.leftHand, handFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightUpperArm, 0.4 + armShiftX, 0, -0.3 - armShiftZ, delta * 2);
+                smoothBone(bones.rightLowerArm, -0.7 - elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightHand, -handFlex, 0, 0, delta * 2);
+                
+                // Fingers fidget slightly
+                setFingers("left", 0.3 + Math.sin(elapsed * 2) * 0.05, delta * 2);
+                setFingers("right", 0.3 + Math.sin(elapsed * 2.2) * 0.05, delta * 2);
+
                 setExp("relaxed", 1);
               }
 
@@ -361,8 +412,12 @@ export function loadVRM(path) {
                 smoothBone(bones.head, -0.05 + Math.sin(elapsed * 2) * 0.03, 0, sway * 0.8, delta * 2);
                 smoothBone(bones.neck, -0.02, 0, 0, delta * 2);
                 smoothBone(bones.spine, breath, 0, sway * 0.3, delta * 2);
-                smoothBone(bones.leftUpperArm, 0.4, 0, 0.3 + Math.sin(elapsed * 2) * 0.06, delta * 2);
-                smoothBone(bones.rightUpperArm, 0.4, 0, -0.3 + Math.sin(elapsed * 2 + 1) * 0.06, delta * 2);
+                smoothBone(bones.leftUpperArm, 0.4 + armShiftX, 0, 0.3 + armShiftZ * 1.5, delta * 2);
+                smoothBone(bones.leftLowerArm, -0.7 + elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.leftHand, handFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightUpperArm, 0.4 + armShiftX, 0, -0.3 - armShiftZ * 1.5, delta * 2);
+                smoothBone(bones.rightLowerArm, -0.7 - elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightHand, -handFlex, 0, 0, delta * 2);
 
                 setExp("happy", 1);
                 setExp("relaxed", 0.8);
@@ -393,17 +448,38 @@ export function loadVRM(path) {
                 smoothBone(bones.spine, breath, 0, 0.05, delta * 2);
                 smoothBone(bones.hips, 0, 0, Math.sin(elapsed * 1.2) * 0.02, delta * 2);
 
+                smoothBone(bones.leftUpperArm, 0.4 + armShiftX, 0, 0.3 + armShiftZ, delta * 2);
+                smoothBone(bones.leftLowerArm, -0.7 + elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.leftHand, handFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightUpperArm, 0.4 + armShiftX, 0, -0.3 - armShiftZ, delta * 2);
+                smoothBone(bones.rightLowerArm, -0.7 - elbowFlex, 0, 0, delta * 2);
+                smoothBone(bones.rightHand, -handFlex, 0, 0, delta * 2);
+
                 setExp("happy", 0.8);
                 setExp("relaxed", 0.6);
               }
 
-              if (isWaving) {
-                const wave = Math.sin(elapsed * 8) * 0.4;
-                smoothBone(bones.rightUpperArm, -0.5, 0, -2.0 + wave, delta * 6);
-                smoothBone(bones.rightLowerArm, -0.3 + wave * 0.3, 0, 0, delta * 6);
-                smoothBone(bones.rightHand, -0.2, 0, wave * 0.2, delta * 6);
-                smoothBone(bones.head, 0, 0, 0.05, delta * 4);
-                setExp("happy", 1);
+              if (currentAction === "greeting") {
+                const t = Math.min(actionProgress / 1.0, 1);
+                
+                // Lean slightly
+                smoothBone(bones.spine, 0.05 * t, 0, 0, delta * 3);
+                smoothBone(bones.chest, 0.05 * t, 0, 0, delta * 3);
+                smoothBone(bones.head, -0.05 * t, 0, 0.1 * t, delta * 3);
+
+                // Right arm waves gently near chest
+                smoothBone(bones.rightUpperArm, 0.4 - 1.2 * t, 0, -0.3 - 0.7 * t, delta * 4);
+                smoothBone(bones.rightLowerArm, -0.7 - 0.9 * t, 0, 0, delta * 4);
+                
+                const wave = Math.sin(elapsed * 7) * 0.25 * t;
+                smoothBone(bones.rightHand, -0.2 * t, wave, 0, delta * 5);
+
+                // Open fingers slightly while waving
+                setFingers("right", 0.3 - (0.3 * t), delta * 4);
+
+                // Left hand rests behind back (base pose)
+                
+                setExp("happy", 1 * t);
               }
 
               if (isTalking && em) {

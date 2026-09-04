@@ -111,8 +111,11 @@ async function init() {
   setTimeout(() => {
     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
     showBubble(greeting, 6000);
-    character?.setWaving(true);
-    setTimeout(() => character?.setWaving(false), 2000);
+    character?.setTalking(true);
+    character?.triggerAction("greeting", 4);
+    setTimeout(() => {
+      character?.setTalking(false);
+    }, 3000);
   }, 500);
 }
 
