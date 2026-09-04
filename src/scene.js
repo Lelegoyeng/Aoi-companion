@@ -5,6 +5,10 @@ import { createPlaceholder, loadVRM } from "./character.js";
 let scene, camera, renderer, character, controls;
 let clock = new THREE.Clock();
 
+// Posisi karakter di sumbu Z (mundur dari kamera supaya tidak terlalu
+// besar di layar saat baru mulai). Kamera berada di z = +2.0.
+const CHARACTER_Z = -0.7;
+
 export async function initScene() {
   const container = document.getElementById("scene-container");
 
@@ -12,7 +16,7 @@ export async function initScene() {
 
   camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 1.45, 2.0); // Moved slightly higher
-  camera.lookAt(0, 1.25, 0); // Looking slightly higher to shift character down
+  camera.lookAt(0, 1.25, CHARACTER_Z); // Looking slightly higher to shift character down
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -25,7 +29,7 @@ export async function initScene() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.target.set(0, 1.2, 0); // Orbit around the chest area
+  controls.target.set(0, 1.2, CHARACTER_Z); // Orbit around the chest area
   controls.minDistance = 1.0;
   controls.maxDistance = 3.5;
   controls.maxPolarAngle = Math.PI / 2 + 0.2; // Don't allow camera to go too far below ground
@@ -50,7 +54,7 @@ export async function initScene() {
   });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = 0.01;
+  ground.position.set(0, 0.01, CHARACTER_Z); // ikut di bawah kaki karakter
   ground.receiveShadow = true;
   scene.add(ground);
 
@@ -64,6 +68,9 @@ export async function initScene() {
     character = createPlaceholder();
     scene.add(character.group);
   }
+
+  // Karakter agak mundur ke belakang supaya tidak terlalu besar di layar.
+  character.group.position.z = CHARACTER_Z;
 
   window.addEventListener("resize", onResize);
 
