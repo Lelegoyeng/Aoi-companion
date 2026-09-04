@@ -312,23 +312,25 @@ export function loadVRM(path) {
               smoothBone(bones.chest, 0, 0, 0, delta * 3);
               smoothBone(bones.neck, 0, 0, 0, delta * 3);
               smoothBone(bones.shoulders, 0, 0, 0, delta * 3);
-              smoothBone(bones.leftUpperArm, 0, 0, 0.2, delta * 3);
-              smoothBone(bones.leftLowerArm, 0, 0, 0, delta * 3);
+              smoothBone(bones.leftUpperArm, 0.4, 0, 0.3, delta * 3);
+              smoothBone(bones.leftLowerArm, -0.7, 0, 0, delta * 3);
               smoothBone(bones.leftHand, 0, 0, 0, delta * 3);
-              smoothBone(bones.rightUpperArm, 0, 0, -0.2, delta * 3);
-              smoothBone(bones.rightLowerArm, 0, 0, 0, delta * 3);
+              smoothBone(bones.rightUpperArm, 0.4, 0, -0.3, delta * 3);
+              smoothBone(bones.rightLowerArm, -0.7, 0, 0, delta * 3);
               smoothBone(bones.rightHand, 0, 0, 0, delta * 3);
 
-              const breath = Math.sin(elapsed * 1.8) * 0.015;
-              const sway = Math.sin(elapsed * 1.2) * 0.02;
+              const breath = (Math.sin(elapsed * 1.8) + Math.sin(elapsed * 2.5) * 0.3) * 0.012;
+              const sway = (Math.sin(elapsed * 0.9) + Math.sin(elapsed * 1.4) * 0.4) * 0.015;
+              const headSway = (Math.sin(elapsed * 0.8) + Math.sin(elapsed * 1.3) * 0.5) * 0.04;
+              const lookAround = (Math.sin(elapsed * 0.5) * 0.05) + (Math.cos(elapsed * 0.3) * 0.03);
 
               if (currentAction === "idle") {
-                smoothBone(bones.head, Math.sin(elapsed * 2) * 0.06, 0, sway, delta * 2);
-                smoothBone(bones.neck, Math.sin(elapsed * 1.7) * 0.03, 0, 0, delta * 2);
+                smoothBone(bones.head, headSway, lookAround, sway, delta * 2);
+                smoothBone(bones.neck, headSway * 0.5, lookAround * 0.5, 0, delta * 2);
                 smoothBone(bones.spine, breath, 0, sway * 0.5, delta * 2);
                 smoothBone(bones.chest, breath * 0.5, 0, 0, delta * 2);
-                smoothBone(bones.leftUpperArm, 0, 0, 0.25 + Math.sin(elapsed * 1.5) * 0.05, delta * 2);
-                smoothBone(bones.rightUpperArm, 0, 0, -0.25 + Math.sin(elapsed * 1.5 + 1) * 0.05, delta * 2);
+                smoothBone(bones.leftUpperArm, 0.4, 0, 0.3 + Math.sin(elapsed * 1.2) * 0.03, delta * 2);
+                smoothBone(bones.rightUpperArm, 0.4, 0, -0.3 + Math.sin(elapsed * 1.2 + 1) * 0.03, delta * 2);
                 setExp("relaxed", 1);
               }
 
@@ -341,12 +343,12 @@ export function loadVRM(path) {
                 smoothBone(bones.spine, 0.05, 0, 0.08, delta * 3);
                 smoothBone(bones.chest, 0.03, 0, 0.05, delta * 3);
 
-                smoothBone(bones.leftUpperArm, -0.6 * t, 0, 0.9 * t, delta * 4);
-                smoothBone(bones.leftLowerArm, -1.2 * t, 0, 0, delta * 4);
+                smoothBone(bones.leftUpperArm, 0.4 - 1.0 * t, 0, 0.3 + 0.6 * t, delta * 4);
+                smoothBone(bones.leftLowerArm, -0.7 - 0.5 * t, 0, 0, delta * 4);
                 smoothBone(bones.leftHand, -0.3 * t, 0, 0, delta * 4);
 
-                smoothBone(bones.rightUpperArm, -0.6 * t2, 0, -0.9 * t2, delta * 4);
-                smoothBone(bones.rightLowerArm, -1.2 * t2, 0, 0, delta * 4);
+                smoothBone(bones.rightUpperArm, 0.4 - 1.0 * t2, 0, -0.3 - 0.6 * t2, delta * 4);
+                smoothBone(bones.rightLowerArm, -0.7 - 0.5 * t2, 0, 0, delta * 4);
                 smoothBone(bones.rightHand, -0.3 * t2, 0, 0, delta * 4);
 
                 smoothBone(bones.shoulders, 0.05 * t, 0, 0, delta * 3);
@@ -359,8 +361,8 @@ export function loadVRM(path) {
                 smoothBone(bones.head, -0.05 + Math.sin(elapsed * 2) * 0.03, 0, sway * 0.8, delta * 2);
                 smoothBone(bones.neck, -0.02, 0, 0, delta * 2);
                 smoothBone(bones.spine, breath, 0, sway * 0.3, delta * 2);
-                smoothBone(bones.leftUpperArm, 0, 0, 0.3 + Math.sin(elapsed * 2) * 0.06, delta * 2);
-                smoothBone(bones.rightUpperArm, 0, 0, -0.3 + Math.sin(elapsed * 2 + 1) * 0.06, delta * 2);
+                smoothBone(bones.leftUpperArm, 0.4, 0, 0.3 + Math.sin(elapsed * 2) * 0.06, delta * 2);
+                smoothBone(bones.rightUpperArm, 0.4, 0, -0.3 + Math.sin(elapsed * 2 + 1) * 0.06, delta * 2);
 
                 setExp("happy", 1);
                 setExp("relaxed", 0.8);
@@ -375,12 +377,9 @@ export function loadVRM(path) {
                 smoothBone(bones.spine, 0.02, 0, -0.03, delta * 3);
                 smoothBone(bones.chest, 0.01, 0, -0.02, delta * 3);
 
-                smoothBone(bones.rightUpperArm, -0.8 * t, 0, -1.0 * t, delta * 3);
-                smoothBone(bones.rightLowerArm, -1.5 * t + sweep, 0, 0.2 * t, delta * 3);
+                smoothBone(bones.rightUpperArm, 0.4 - 1.2 * t, 0, -0.3 - 0.7 * t, delta * 3);
+                smoothBone(bones.rightLowerArm, -0.7 - 0.8 * t + sweep, 0, 0.2 * t, delta * 3);
                 smoothBone(bones.rightHand, -0.4 * t, 0, 0.1 * t, delta * 3);
-
-                smoothBone(bones.leftUpperArm, 0, 0, 0.2, delta * 2);
-                smoothBone(bones.leftLowerArm, 0, 0, 0, delta * 2);
 
                 smoothBone(bones.shoulders, 0.03 * t, 0, -0.02 * t, delta * 3);
 
