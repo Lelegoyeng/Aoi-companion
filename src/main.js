@@ -27,8 +27,51 @@ const IDLE_RESPONSES = [
   "Aoi juga begitu pikirnya!",
 ];
 
+// Reaction triggers based on keywords in user input
+const REACTION_KEYWORDS = {
+  greeting: ["hai", "halo", "hey", "hi", "konichiwa", "pagi", "siang", "malam"],
+  smile: ["bagus", "keren", "hebat", "cantik", "indah", "suka", "sayang"],
+  nod: ["ya", "oke", "benar", "setuju", "paham", "mengerti", "betul"],
+  thinking: ["kenapa", "mengapa", "gimana", "bagaimana", "kapan", "dimana", "apa"],
+  shy: ["malu", "gemes", "lucu banget", "imut"],
+  reactionLove: ["sayang", "cinta", "love", "suka banget", "cantik banget"],
+  reactionSurprise: ["wow", "wah", "serius", "beneran", "asli", "gila"],
+  reactionSad: ["sedih", "kesepian", "galau", "kecewa", "susah"],
+  lean: ["dekat", "sini", "kemari", "mendekat"],
+  stretch: ["bosan", "capek", "lelah", "ngantuk", "istirahat"],
+};
+
+// Response text per reaction. SATU-SATUNYA gerakan yang ada adalah
+// "greeting" (dari greeting.vrma); reaksi lain hanya teks, tanpa animasi.
+const REACTION_RESPONSES = {
+  greeting: { text: "Hai juga~ Senang lihat kamu lagi!", anim: "greeting" },
+  smile: { text: "Makasih ya~ Aoi senang!", anim: null },
+  nod: { text: "Oke! Aoi ngerti~", anim: null },
+  thinking: { text: "Hmm, Aoi pikirkan dulu ya...", anim: null },
+  shy: { text: "Eh?! Jangan begitu dong~ *malu*", anim: null },
+  reactionLove: { text: "Aoi juga sayang kamu~!", anim: null },
+  reactionSurprise: { text: "Wah, serius?! Keren ya!", anim: null },
+  reactionSad: { text: "Aoi di sini buat kamu, ya~", anim: null },
+  lean: { text: "Aoi mendekat nih~", anim: null },
+  stretch: { text: "Aoi juga mau meregangkan badan~", anim: null },
+};
+
+function detectReaction(input) {
+  const lower = input.toLowerCase();
+  for (const [reaction, keywords] of Object.entries(REACTION_KEYWORDS)) {
+    for (const kw of keywords) {
+      if (lower.includes(kw)) return reaction;
+    }
+  }
+  return null;
+}
+
 function getLocalResponse(_input) {
-  return IDLE_RESPONSES[Math.floor(Math.random() * IDLE_RESPONSES.length)];
+  const reaction = detectReaction(_input);
+  if (reaction && REACTION_RESPONSES[reaction]) {
+    return REACTION_RESPONSES[reaction];
+  }
+  return { text: IDLE_RESPONSES[Math.floor(Math.random() * IDLE_RESPONSES.length)], anim: null };
 }
 
 function initModeToggle() {
@@ -78,7 +121,12 @@ function handleSend() {
 }
 
 function processUserInput(text) {
-  const response = getLocalResponse(text);
+  const { text: response, anim } = getLocalResponse(text);
+
+  // Trigger reaction animation if detected
+  if (anim && character) {
+    character.triggerAction(anim, 4);
+  }
 
   if (currentMode === "voice") {
     character?.setTalking(true);
@@ -108,14 +156,11 @@ async function init() {
   initModeToggle();
   initSpeechCallbacks();
 
+  // Greeting on startup (satu-satunya gerakan karakter)
   setTimeout(() => {
     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
     showBubble(greeting, 6000);
-    character?.setTalking(true);
-    character?.triggerAction("greeting", 4);
-    setTimeout(() => {
-      character?.setTalking(false);
-    }, 3000);
+    character?.triggerAction("greeting");
   }, 500);
 }
 
