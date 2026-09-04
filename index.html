@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aoi</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="drag-region" data-tauri-drag-region></div>
+      <div id="scene-container"></div>
+      <div id="chat-bubble" class="hidden">
+        <div id="chat-text"></div>
+      </div>
+      <div id="controls">
+        <div id="mode-toggle">
+          <button id="btn-chat" class="mode-btn active" title="Chat Mode">Chat</button>
+          <button id="btn-voice" class="mode-btn" title="Voice Mode">Voice</button>
+        </div>
+        <div id="input-area">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="Ketik ke Aoi..."
+            autocomplete="off"
+          />
+          <button id="btn-send">Kirim</button>
+          <button id="btn-mic" class="hidden" title="Mulai bicara">Mic</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
