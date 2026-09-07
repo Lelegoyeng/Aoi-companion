@@ -156,9 +156,9 @@ export function createPlaceholder() {
   return {
     group,
     parts,
-    update() {},
-    triggerAction() {},
-    setTalking() {},
+    update() { },
+    triggerAction() { },
+    setTalking() { },
   };
 }
 
@@ -217,6 +217,7 @@ export async function loadVRM(path) {
     { id: "peace-sign", url: "/animations/peace-sign.vrma", loop: false },
     { id: "shoot", url: "/animations/shoot.vrma", loop: false },
     { id: "model-pose", url: "/animations/model-pose.vrma", loop: false },
+    { id: "dance", url: "/animations/dance.vrma", loop: false },
   ]);
 
   console.log("VRM model loaded:", vrm.meta?.title || path);

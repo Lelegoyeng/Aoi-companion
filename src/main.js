@@ -16,7 +16,7 @@ let animTimer = null;
 let chatTimer = null;
 
 // ---------- Awal chat (sapaan saat dibuka) ----------
-const GREETING = "Halo, kak!! Aoi di sini~";
+const GREETING = "Halo, kak lemon!! Aoi di sini~";
 
 // ---------- Random chat (kalimat lucu / cerita kecil) ----------
 const RANDOM_CHATS = [
@@ -39,11 +39,10 @@ const RANDOM_CHATS = [
 // ---------- Random anim (diputar bergantian saat idle) ----------
 const RANDOM_ANIMS = [
   "show-full-body",
-  "relax",
-  "sleepy",
   "peace-sign",
   "shoot",
   "model-pose",
+  "dance",
 ];
 
 const ANIM_MIN_MS = 5000;
@@ -84,7 +83,7 @@ function scheduleNextChat() {
     // supaya tidak bentrok dengan animasi (show-full-body / jump, dll).
     if (character && !character.isAnimating() && !isBubbleVisible()) {
       // showBubble(randomPick(RANDOM_CHATS), 6000);
-      showBubble("Apakah kamu sudah makan? 🥺", 6000);
+      showBubble("udah makan belum kamu kak mon? 🥺", 6000);
     }
     scheduleNextChat();
   }, randomBetween(CHAT_MIN_MS, CHAT_MAX_MS));
