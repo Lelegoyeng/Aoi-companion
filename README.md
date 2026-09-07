@@ -4,7 +4,7 @@
 
 **Aoi** adalah desktop companion berupa karakter 3D anime wanita yang bisa diajak bicara (voice) atau mengetik (chat). Aoi akan merespons dengan **bubble chat** di samping kepala atau **bersuara** tergantung pengaturan mode.
 
-## Fitur Utami
+## Fitur Utama
 
 - **Karakter 3D Anime Wanita** bernama **Aoi**
 - **Interaksi via Chat (ketik)** - User mengetik pesan, Aoi membalas dengan bubble chat
@@ -14,7 +14,7 @@
 - **Mode fleksibel** - Pengguna bisa memilih bubble chat, suara, atau keduanya
 - **Cross-platform** - Berjalan di **Linux** dan **Windows**
 
-## Tech Stack (Rencana)
+## Tech Stack
 
 | Komponen | Teknologi |
 |----------|-----------|
@@ -65,45 +65,34 @@ Aoi-companion/
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run dalam mode development (browser)
-npm run dev
+pnpm run dev
 
 # Run sebagai desktop app (Tauri)
-npm run tauri dev
+pnpm run tauri dev
 
-# Build untuk produksi
-npm run tauri build
+# Build untuk produksi (Linux)
+pnpm run tauri build
 ```
 
-### Build untuk Windows (dari Linux)
+### Build Windows dari Linux (NSIS)
 
-Untuk membangun aplikasi Windows executable (`.exe`) dari sistem Linux, gunakan `mingw-w64`:
+Untuk membangun installer Windows dari sistem Linux, gunakan NSIS:
 
 ```bash
-# 1. Install mingw-w64
-sudo apt install -y mingw-w64
-
-# 2. Tambah target Rust untuk Windows
-rustup target add x86_64-pc-windows-gnu
-
-# 3. Build aplikasi Windows
-npx tauri build --target x86_64-pc-windows-gnu
-
-# Atau build dengan installer NSIS (lebih lengkap)
-# Install NSIS terlebih dahulu:
+# 1. Install NSIS
 sudo apt install -y nsis
 
-# Build dengan bundler NSIS:
-npx tauri build --target x86_64-pc-windows-gnu --bundles nsis
+# 2. Build dengan bundler NSIS
+pnpm run tauri build --target x86_64-pc-windows-gnu --bundles nsis
 ```
 
 Output file:
-- **Executable**: `src-tauri/target/x86_64-pc-windows-gnu/release/aoi-companion.exe`
 - **Installer NSIS**: `src-tauri/target/x86_64-pc-windows-gnu/release/bundle/nsis/Aoi Companion_0.1.0_x64-setup.exe`
 
-### Mengganti Model Karakter
+## Mengganti Model Karakter
 
 1. Buat model 3D Aoi menggunakan **VRoid Studio** atau tools lainnya.
 2. Export dalam format `.vrm` (recommended) atau `.glb`/`.gltf`.
