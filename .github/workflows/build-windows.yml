@@ -27,7 +27,7 @@ jobs:
           toolchain: stable
       
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       
       - name: Build frontend
         run: pnpm run build
