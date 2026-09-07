@@ -1,2 +1,1 @@
 # pnpm workspace configuration
-EOF && git add pnpm-workspace.yaml && git commit -m "Fix pnpm-workspace.yaml configuration" && git push git@github.com:Lelegoyeng/Aoi-companion.git main
