@@ -41,6 +41,8 @@ canvas {
 }
 
 #chat-bubble {
+  /* Posisi diatur dinamis oleh main.js (anchor ke kepala karakter).
+     Top/left default hanya cadangan sebelum di-set via JS. */
   position: absolute;
   top: 10px;
   left: 35px;
@@ -68,7 +70,7 @@ canvas {
   content: "";
   position: absolute;
   bottom: -10px;
-  left: 30px;
+  left: calc(var(--tail-x, 38px) - 8px);
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
@@ -80,7 +82,7 @@ canvas {
   content: "";
   position: absolute;
   bottom: -13px;
-  left: 28px;
+  left: calc(var(--tail-x, 38px) - 10px);
   width: 0;
   height: 0;
   border-left: 10px solid transparent;

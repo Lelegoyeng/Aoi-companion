@@ -4,6 +4,8 @@ const chatText = document.getElementById("chat-text");
 let hideTimeout = null;
 
 export function showBubble(text, duration = 5000) {
+  // Amankan bila elemen bubble belum/ tidak ada di DOM.
+  if (!chatBubble || !chatText) return;
   if (hideTimeout) clearTimeout(hideTimeout);
 
   chatText.textContent = "";
@@ -30,6 +32,7 @@ export function showBubble(text, duration = 5000) {
 }
 
 export function showBubbleInstant(text, duration = 5000) {
+  if (!chatBubble || !chatText) return;
   if (hideTimeout) clearTimeout(hideTimeout);
 
   chatText.classList.remove("typing");
@@ -42,6 +45,7 @@ export function showBubbleInstant(text, duration = 5000) {
 }
 
 export function hideBubble() {
+  if (!chatBubble || !chatText) return;
   if (hideTimeout) clearTimeout(hideTimeout);
   chatText.classList.remove("typing");
   chatBubble.classList.add("hidden");

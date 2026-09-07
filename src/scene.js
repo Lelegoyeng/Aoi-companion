@@ -92,3 +92,32 @@ function animate() {
 export function getCharacter() {
   return character;
 }
+
+// ============================================================
+// Posisi layar puncak kepala karakter (dipakai untuk menempelkan
+// bubble chat dekat kepala). Mengembalikan { x, y } dalam piksel
+// CSS relatif terhadap container, atau null bila belum siap.
+// ============================================================
+export function getHeadScreenPoint() {
+  if (!character || !camera || !renderer) return null;
+
+  scene.updateMatrixWorld(true);
+
+  // Titik proyeksi: pusat horizontal karakter, setinggi puncak badan
+  // (kepala), di kedalaman tengah karakter.
+  const box = new THREE.Box3().setFromObject(character.group);
+  if (box.isEmpty()) return null;
+
+  const center = new THREE.Vector3(
+    (box.min.x + box.max.x) / 2,
+    box.max.y,
+    (box.min.z + box.max.z) / 2
+  ).project(camera);
+
+  const w = window.innerWidth || 1;
+  const h = window.innerHeight || 1;
+  return {
+    x: (center.x * 0.5 + 0.5) * w,
+    y: (-center.y * 0.5 + 0.5) * h,
+  };
+}
