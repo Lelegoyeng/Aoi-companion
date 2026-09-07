@@ -210,5 +210,9 @@ export async function createVRMAnimationPlayer(vrm, clipSpecs) {
     get currentId() {
       return activeOnce ?? (idleId && actions[idleId]?.isRunning() ? idleId : null);
     },
+    isAnimating() {
+      // Kembalikan true jika ada animasi selain idle yang sedang berjalan
+      return activeOnce !== null;
+    },
   };
 }

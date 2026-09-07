@@ -10,6 +10,7 @@ import {
 
 let currentMode = "chat";
 let character = null;
+let showBodyInterval = null;
 
 const GREETINGS = [
   "Hai! Aku Aoi~ Ada yang bisa aku bantu?",
@@ -132,6 +133,21 @@ function initModeToggle() {
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") handleSend();
   });
+
+  // Animasi saat mengetik
+  userInput.addEventListener("input", () => {
+    if (character && userInput.value.length > 0) {
+      // Ketika sedang mengetik, tampilkan animasi thinking/look-around
+      character.triggerAction("thinking");
+    }
+  });
+
+  // Interval untuk memutar show-full-body setiap 5 detik jika tidak ada animasi lain
+  showBodyInterval = setInterval(() => {
+    if (character && !character.isAnimating()) {
+      character.triggerAction("show-full-body");
+    }
+  }, 5000);
 }
 
 function handleSend() {
@@ -140,6 +156,12 @@ function handleSend() {
   if (!text) return;
 
   input.value = "";
+
+  // Animasi saat menjelaskan/menjawab (seperti sedang bicara/explaining)
+  if (character) {
+    character.triggerAction("surprised");  //
+  }
+
   processUserInput(text);
 }
 
@@ -179,6 +201,13 @@ async function init() {
   initModeToggle();
   initSpeechCallbacks();
 
+  // Interval untuk memutar show-full-body setiap 5 detik jika tidak ada animasi lain
+  showBodyInterval = setInterval(() => {
+    if (character && !character.isAnimating()) {
+      character.triggerAction("show-full-body");
+    }
+  }, 5000);
+
   // Greeting on startup
   setTimeout(() => {
     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
@@ -187,4 +216,12 @@ async function init() {
   }, 500);
 }
 
+function cleanup() {
+  if (showBodyInterval) {
+    clearInterval(showBodyInterval);
+    showBodyInterval = null;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", init);
+window.addEventListener("beforeunload", cleanup);

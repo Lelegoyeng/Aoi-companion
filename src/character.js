@@ -226,6 +226,7 @@ export async function loadVRM(path) {
     update: (delta, elapsed) => player.update(delta, elapsed),
     triggerAction: (name) => player.triggerAction(name),
     setTalking: (val) => player.setTalking(val),
+    isAnimating: () => player.isAnimating(),
   };
 }
 
