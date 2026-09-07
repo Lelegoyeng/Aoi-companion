@@ -77,6 +77,32 @@ npm run tauri dev
 npm run tauri build
 ```
 
+### Build untuk Windows (dari Linux)
+
+Untuk membangun aplikasi Windows executable (`.exe`) dari sistem Linux, gunakan `mingw-w64`:
+
+```bash
+# 1. Install mingw-w64
+sudo apt install -y mingw-w64
+
+# 2. Tambah target Rust untuk Windows
+rustup target add x86_64-pc-windows-gnu
+
+# 3. Build aplikasi Windows
+npx tauri build --target x86_64-pc-windows-gnu
+
+# Atau build dengan installer NSIS (lebih lengkap)
+# Install NSIS terlebih dahulu:
+sudo apt install -y nsis
+
+# Build dengan bundler NSIS:
+npx tauri build --target x86_64-pc-windows-gnu --bundles nsis
+```
+
+Output file:
+- **Executable**: `src-tauri/target/x86_64-pc-windows-gnu/release/aoi-companion.exe`
+- **Installer NSIS**: `src-tauri/target/x86_64-pc-windows-gnu/release/bundle/nsis/Aoi Companion_0.1.0_x64-setup.exe`
+
 ### Mengganti Model Karakter
 
 1. Buat model 3D Aoi menggunakan **VRoid Studio** atau tools lainnya.
