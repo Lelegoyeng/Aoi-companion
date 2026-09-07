@@ -6,17 +6,17 @@ let scene, camera, renderer, character, controls;
 let clock = new THREE.Clock();
 
 // Posisi karakter di sumbu Z (mundur dari kamera supaya tidak terlalu
-// besar di layar saat baru mulai). Kamera berada di z = +2.0.
-const CHARACTER_Z = -0.7;
+// besar di layar saat baru mulai). Kamera berada di z = +3.5.
+const CHARACTER_Z = -0.3;
 
 export async function initScene() {
   const container = document.getElementById("scene-container");
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 1.45, 2.0); // Moved slightly higher
-  camera.lookAt(0, 1.25, CHARACTER_Z); // Looking slightly higher to shift character down
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 1.3, 2.3); // Dekat seperti videocall
+  camera.lookAt(0, 1.1, CHARACTER_Z);
 
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -29,10 +29,10 @@ export async function initScene() {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.target.set(0, 1.2, CHARACTER_Z); // Orbit around the chest area
+  controls.target.set(0, 1.1, CHARACTER_Z); // Orbit around center of character
   controls.minDistance = 1.0;
   controls.maxDistance = 3.5;
-  controls.maxPolarAngle = Math.PI / 2 + 0.2; // Don't allow camera to go too far below ground
+  controls.maxPolarAngle = Math.PI / 2.2; // Batasi sudut agar tidak terlalu ke bawah
 
   const ambientLight = new THREE.AmbientLight(0xffeeff, 0.7);
   scene.add(ambientLight);
@@ -46,21 +46,11 @@ export async function initScene() {
   rimLight.position.set(-2, 2, -1);
   scene.add(rimLight);
 
-  const groundGeo = new THREE.CircleGeometry(1.5, 32);
-  const groundMat = new THREE.MeshStandardMaterial({
-    color: 0xe0b0ff,
-    transparent: true,
-    opacity: 0.25,
-  });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(0, 0.01, CHARACTER_Z); // ikut di bawah kaki karakter
-  ground.receiveShadow = true;
-  scene.add(ground);
+  // Lantai dihapus agar tidak terlihat (zoom ke atas)
 
   try {
     character = await loadVRM("/models/character1.vrm");
-    character.group.scale.set(1, 1, 1);
+    character.group.scale.set(1.0, 1.0, 1.0); // Normal scale untuk videocall
     scene.add(character.group);
     console.log("VRM model loaded successfully");
   } catch (err) {
@@ -69,8 +59,8 @@ export async function initScene() {
     scene.add(character.group);
   }
 
-  // Karakter agak mundur ke belakang supaya tidak terlalu besar di layar.
-  character.group.position.z = CHARACTER_Z;
+  // Karakter diposisikan di tengah layar
+  character.group.position.set(0, 0, CHARACTER_Z);
 
   window.addEventListener("resize", onResize);
 

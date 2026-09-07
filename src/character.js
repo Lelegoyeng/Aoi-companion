@@ -1,4 +1,4 @@
-// ============================================================
+// ===========================================================
 // character.js — FACADE KARAKTER
 // ------------------------------------------------------------
 // Ekspor publik (dipakai scene.js / main.js):
@@ -11,7 +11,7 @@
 //   update(dt, el)   : dipanggil tiap frame
 //   triggerAction(name, duration) : hanya 'greeting' yang berfungsi
 //   setTalking(bool)
-// ============================================================
+// ===========================================================
 
 import * as THREE from "three";
 import { createVRMAnimationPlayer } from "./animation/VRMAnimationPlayer.js";
@@ -26,10 +26,10 @@ const DRESS = 0xc8a0e8;
 const DRESS_ACCENT = 0xe0b0ff;
 const SHOE = 0x3a2050;
 
-// ============================================================
+// ===========================================================
 // PLACEHOLDER CHARACTER (fallback statis)
 // Hanya dipakai bila model VRM gagal dimuat. Tidak ada gerakan.
-// ============================================================
+// ===========================================================
 export function createPlaceholder() {
   const group = new THREE.Group();
   const parts = {};
@@ -162,9 +162,9 @@ export function createPlaceholder() {
   };
 }
 
-// ============================================================
+// ===========================================================
 // VRM CHARACTER (dengan animasi .vrma dari public/animations/)
-// ============================================================
+// ===========================================================
 export async function loadVRM(path) {
   const [{ GLTFLoader }, { VRMLoaderPlugin }] = await Promise.all([
     import("three/addons/loaders/GLTFLoader.js"),
@@ -229,9 +229,9 @@ export async function loadVRM(path) {
   };
 }
 
-// ============================================================
+// ===========================================================
 // MODEL GLTF/GLB BIASA (tanpa sistem animasi VRM)
-// ============================================================
+// ===========================================================
 export async function loadModel(path) {
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
 

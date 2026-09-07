@@ -183,7 +183,7 @@ async function init() {
   setTimeout(() => {
     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
     showBubble(greeting, 6000);
-    character?.triggerAction("greeting");
+    character?.triggerAction("show-full-body");
   }, 500);
 }
 
